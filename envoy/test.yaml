@@ -1,0 +1,57 @@
+admin:
+  access_log_path: "/dev/stdout"
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 10000
+static_resources:
+  listeners:
+  - address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 9090 
+    filter_chains:
+    - filters:
+      - name: envoy.http_connection_manager
+        config:
+          codec_type: auto
+          add_user_agent: true
+          idle_timeout: 0.840s
+          access_log:
+          - name: envoy.file_access_log
+            config:
+              path: "/dev/stdout"
+          stat_prefix: ingress_http
+          route_config:
+            name: local_route
+            virtual_hosts:
+            - name: local_service
+              domains:
+                - "*"
+              cors:
+                allow_origin: ["*"]
+              routes:
+              - match:
+                  prefix: "/"
+                route:
+                  cluster: local_service_grpc
+                  cors:
+                      allow_origin: ["*"]
+                      allow_headers: content-type,x-grpc-web
+          http_filters:
+          - name: envoy.cors
+          - name: envoy.grpc_web
+          - name: envoy.grpc_http1_bridge
+            config: {}
+          - name: envoy.router
+            config: {}
+  clusters:
+  - name: local_service_grpc
+    type: logical_dns
+    lb_policy: round_robin
+    connect_timeout: 0.50s
+    http2_protocol_options: {}
+    hosts:
+        - socket_address:
+            address: grpcservice
+            port_value: 9091

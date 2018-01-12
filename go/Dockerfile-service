@@ -1,0 +1,8 @@
+FROM golang:alpine
+
+ADD . /go/src
+
+RUN apk add --no-cache git && cd /go/src/exampleserver && go get -v ./... 
+RUN cd /go/src/exampleserver && go build ./
+CMD ["/go/bin/exampleserver"]
+

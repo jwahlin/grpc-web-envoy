@@ -1,0 +1,3 @@
+FROM envoyproxy/envoy
+
+CMD ["envoy", "-l","info", "-c","/etc/envoy/test.yaml"]

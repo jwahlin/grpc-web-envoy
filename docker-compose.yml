@@ -1,0 +1,25 @@
+version: '2'
+services:
+  nginx:
+    build:
+      context: ui 
+      dockerfile: Dockerfile-nginx
+    ports:
+      - "8000:80"
+  grpcservice:
+    build:
+      context: go 
+      dockerfile: Dockerfile-service
+    expose:
+      - "9091"
+  default:
+    build:
+      context: envoy 
+      dockerfile: Dockerfile-envoy
+    volumes:
+      - ./envoy/test.yaml:/etc/envoy/test.yaml
+    ports:
+      - "9090:9090"
+    links:
+      - grpcservice
+      - nginx
