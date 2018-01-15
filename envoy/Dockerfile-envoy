@@ -1,3 +1,6 @@
-FROM envoyproxy/envoy
+FROM envoyproxy/envoy-alpine
 
-CMD ["envoy", "-l","info", "-c","/etc/envoy/test.yaml"]
+RUN apk update
+RUN apk add ngrep
+
+CMD ["envoy", "-l","trace", "-c","/etc/envoy/test.yaml"]

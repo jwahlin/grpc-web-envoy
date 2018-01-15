@@ -2,7 +2,9 @@ FROM golang:alpine
 
 ADD . /go/src
 
-RUN apk add --no-cache git && cd /go/src/exampleserver && go get -v ./... 
+RUN apk update
+RUN apk add ngrep
+RUN apk add --no-cache git && cd /go/src/exampleserver && go get -v ./...
 RUN cd /go/src/exampleserver && go build ./
 CMD ["/go/bin/exampleserver"]
 
