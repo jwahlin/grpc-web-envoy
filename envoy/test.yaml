@@ -38,6 +38,11 @@ static_resources:
                   cors:
                       allow_origin: ["*"]
                       allow_headers: content-type,x-grpc-web
+            response_headers_to_add:
+              header:
+                key: Access-Control-Expose-Headers
+                value: Access-Control-Allow-Origin, Access-Control-Allow-Credentials, Content-Type, Pre-Response-Metadata
+              append: false
           http_filters:
           - name: envoy.cors
           - name: envoy.grpc_web

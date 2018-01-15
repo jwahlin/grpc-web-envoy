@@ -2129,8 +2129,6 @@ var grpc;
                     rawOnEnd(grpcStatus_1, grpcMessage_1[0], responseHeaders);
                     return;
                 }
-                console.log("response Trailers")
-                console.log(responseTrailers)
 
                 var grpcStatus = getStatusFromHeaders(responseTrailers);
                 if (grpcStatus === null) {
@@ -7695,7 +7693,15 @@ function isTrailerHeader(headerView) {
 }
 function parseTrailerData(msgData) {
     var decoder = global.TextDecoder !== undefined ? global.TextDecoder : TextEncoding.TextDecoder;
-    return new grpc_1.Metadata(new decoder("utf-8").decode(msgData));
+
+    var temp = new decoder("utf-8").decode(msgData)
+
+    temp = temp.replace("grpc-status:", "Grpc-Status: ")
+    temp = temp.replace("grpc-message:", "Grpc-Message: ")
+    temp = temp.replace("post-response-metadata:", "Post-Response-Metadata: ")
+
+    return new grpc_1.Metadata(temp);
+    // return new grpc_1.Metadata(new decoder("utf-8").decode(msgData));
 }
 function readLengthFromHeader(headerView) {
     return headerView.getUint32(1, false);
@@ -13311,9 +13317,6 @@ function getBook() {
   console.log("get Book")
     var getBookRequest = new book_service_pb_1.GetBookRequest();
     getBookRequest.setIsbn(60929871);
-
-    console.log("getBookRequest")
-    console.log(getBookRequest)
 
     grpc_web_client_1.grpc.unary(book_service_pb_service_1.BookService.GetBook, {
         request: getBookRequest,
